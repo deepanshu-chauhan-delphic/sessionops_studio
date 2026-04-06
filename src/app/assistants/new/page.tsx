@@ -1,17 +1,29 @@
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
+import AssistantForm from "@/components/assistants/AssistantForm";
+
 export default function NewAssistantPage() {
   return (
     <div className="p-8">
-      <h1 className="text-3xl mb-2" style={{ fontFamily: "var(--font-display)" }}>
+      <Link
+        href="/assistants"
+        style={{
+          display: "inline-flex", alignItems: "center", gap: 4,
+          fontSize: 13, fontFamily: "'Inter', sans-serif",
+          color: "var(--text-secondary)", textDecoration: "none", marginBottom: 20,
+        }}
+      >
+        <ChevronLeft size={14} /> Back to Assistants
+      </Link>
+
+      <h1 style={{ fontFamily: "var(--font-display)", fontSize: 28, color: "var(--text-primary)", margin: "0 0 6px" }}>
         New Assistant
       </h1>
-      <p className="text-sm" style={{ color: "var(--text-secondary)", fontFamily: "'Inter', sans-serif" }}>
-        Configure a new voice intake assistant.
+      <p style={{ fontSize: 14, color: "var(--text-secondary)", fontFamily: "'Inter', sans-serif", marginBottom: 28 }}>
+        Configure a new voice intake assistant. Save as draft to continue editing later, or publish to make it launchable.
       </p>
-      <div className="mt-8 rounded-card p-12 text-center" style={{ background: "var(--bg-card)", border: "1px dashed var(--border)" }}>
-        <p className="text-sm" style={{ color: "var(--text-secondary)", fontFamily: "'Inter', sans-serif" }}>
-          Assistant form coming soon — Phase 2
-        </p>
-      </div>
+
+      <AssistantForm />
     </div>
   );
 }

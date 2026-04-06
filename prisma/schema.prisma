@@ -1,0 +1,135 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  admin
+  viewer
+}
+
+enum AssistantStatus {
+  draft
+  published
+  archived
+}
+
+enum SessionStatus {
+  active
+  completed
+  failed
+  needs_review
+}
+
+enum Speaker {
+  user
+  assistant
+}
+
+enum AuditAction {
+  created
+  edited
+  published
+  archived
+  duplicated
+  session_started
+  session_ended
+}
+
+enum AuditEntityType {
+  assistant
+  session
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String     @map("password_hash")
+  name         String
+  role         UserRole   @default(viewer)
+  createdAt    DateTime   @default(now()) @map("created_at")
+
+  assistants   Assistant[]
+  sessions     Session[]
+  auditLogs    AuditLog[]
+
+  @@map("users")
+}
+
+model Assistant {
+  id          String          @id @default(cuid())
+  name        String
+  purpose     String
+  voice       String
+  language    String
+  status      AssistantStatus @default(draft)
+  tools       Json            @default("[]")
+  createdBy   String          @map("created_by")
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+  publishedAt DateTime?       @map("published_at")
+  version     Int             @default(1)
+
+  creator     User            @relation(fields: [createdBy], references: [id])
+  sessions    Session[]
+
+  @@map("assistants")
+}
+
+model Session {
+  id           String        @id @default(cuid())
+  assistantId  String        @map("assistant_id")
+  operatorId   String        @map("operator_id")
+  status       SessionStatus @default(active)
+  startedAt    DateTime      @default(now()) @map("started_at")
+  endedAt      DateTime?     @map("ended_at")
+  durationSecs Int?          @map("duration_secs")
+  turnCount    Int           @default(0) @map("turn_count")
+  summary      Json?
+  metadata     Json          @default("{}")
+
+  assistant    Assistant     @relation(fields: [assistantId], references: [id])
+  operator     User          @relation(fields: [operatorId], references: [id])
+  transcript   TranscriptEntry[]
+
+  @@map("sessions")
+}
+
+model TranscriptEntry {
+  id        String   @id @default(cuid())
+  sessionId String   @map("session_id")
+  speaker   Speaker
+  content   String
+  timestamp DateTime @default(now())
+  sequence  Int
+
+  session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("transcript_entries")
+}
+
+// AuditLog uses entityId as plain string (no FK) to support both
+// assistant and session entities without a polymorphic relation.
+model AuditLog {
+  id         String          @id @default(cuid())
+  userId     String          @map("user_id")
+  action     AuditAction
+  entityType AuditEntityType @map("entity_type")
+  entityId   String          @map("entity_id")
+  entityName String          @map("entity_name")
+  changes    Json?
+  createdAt  DateTime        @default(now()) @map("created_at")
+
+  user       User            @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}

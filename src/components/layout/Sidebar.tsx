@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 import {
   Bot,
   History,
@@ -9,6 +10,7 @@ import {
   LogOut,
   ShieldCheck,
 } from "lucide-react";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 const NAV_ITEMS = [
   { label: "Assistants", href: "/assistants", icon: Bot },
@@ -16,15 +18,13 @@ const NAV_ITEMS = [
   { label: "Audit Log", href: "/audit", icon: ClipboardList },
 ];
 
-// Mock current user — will be replaced with real auth later
-const MOCK_USER = {
-  name: "Alex Johnson",
-  email: "admin@miihealth.com",
-  role: "admin" as "admin" | "viewer",
-};
+function initials(name: string) {
+  return name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
+}
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const user = useCurrentUser();
 
   return (
     <aside
@@ -102,51 +102,51 @@ export default function Sidebar() {
         className="px-4 py-4 border-t"
         style={{ borderColor: "var(--border-dark)" }}
       >
-        <div className="flex items-center gap-3 px-2 py-2 rounded-lg">
-          <div
-            className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0"
-            style={{
-              background: "var(--accent-color)",
-              color: "#fff",
-              fontFamily: "'Inter', sans-serif",
-            }}
-          >
-            {MOCK_USER.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p
-              className="text-sm font-medium truncate"
+        {user && (
+          <div className="flex items-center gap-3 px-2 py-2 rounded-lg">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0"
               style={{
-                color: "var(--text-on-dark)",
+                background: "var(--accent-color)",
+                color: "#fff",
                 fontFamily: "'Inter', sans-serif",
               }}
             >
-              {MOCK_USER.name}
-            </p>
-            <div className="flex items-center gap-1 mt-0.5">
-              <ShieldCheck size={11} style={{ color: "var(--accent-color)" }} />
-              <span
-                className="text-xs capitalize"
+              {initials(user.name ?? user.email ?? "U")}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p
+                className="text-sm font-medium truncate"
                 style={{
-                  color: "var(--text-on-dark-muted)",
+                  color: "var(--text-on-dark)",
                   fontFamily: "'Inter', sans-serif",
                 }}
               >
-                {MOCK_USER.role}
-              </span>
+                {user.name ?? user.email}
+              </p>
+              <div className="flex items-center gap-1 mt-0.5">
+                <ShieldCheck size={11} style={{ color: "var(--accent-color)" }} />
+                <span
+                  className="text-xs capitalize"
+                  style={{
+                    color: "var(--text-on-dark-muted)",
+                    fontFamily: "'Inter', sans-serif",
+                  }}
+                >
+                  {user.role}
+                </span>
+              </div>
             </div>
+            <button
+              title="Sign out"
+              onClick={() => signOut({ callbackUrl: "/login" })}
+              className="opacity-50 hover:opacity-100 transition-opacity"
+              style={{ color: "var(--text-on-dark)", background: "none", border: "none", cursor: "pointer" }}
+            >
+              <LogOut size={15} />
+            </button>
           </div>
-          <button
-            title="Sign out"
-            className="opacity-50 hover:opacity-100 transition-opacity"
-            style={{ color: "var(--text-on-dark)" }}
-          >
-            <LogOut size={15} />
-          </button>
-        </div>
+        )}
       </div>
     </aside>
   );
