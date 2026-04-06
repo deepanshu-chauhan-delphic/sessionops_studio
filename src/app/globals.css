@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Saira+Stencil+One&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -9,7 +11,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-display);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -18,11 +20,6 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -43,78 +40,70 @@
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --font-display: 'Saira Stencil One', sans-serif;
+  --font-body: 'Inter', sans-serif;
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
+  /* Core surfaces */
+  --background: #ffffff;
+  --foreground: #1e2229;
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Cards / popovers */
+  --card: #efebe5;
+  --card-foreground: #1e2229;
+  --popover: #ffffff;
+  --popover-foreground: #1e2229;
+
+  /* Primary = accent teal */
+  --primary: #00c9af;
+  --primary-foreground: #ffffff;
+
+  /* Secondary = warm card surface */
+  --secondary: #efebe5;
+  --secondary-foreground: #1e2229;
+
+  /* Muted = subdued text / backgrounds */
+  --muted: #efebe5;
+  --muted-foreground: #35393f;
+
+  /* Accent = subtle teal highlight */
+  --accent: #efebe5;
+  --accent-foreground: #00c9af;
+
+  /* Destructive */
+  --destructive: #e74c3c;
+
+  /* Borders & inputs */
+  --border: #e0dcd6;
+  --input: #efebe5;
+  --ring: #00c9af;
+
+  /* Border radius base */
+  --radius: 0.5rem;
+
+  /* Sidebar — dark */
+  --sidebar: #1e2229;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #00c9af;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(0, 201, 175, 0.15);
+  --sidebar-accent-foreground: #00c9af;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #00c9af;
+
+  /* Custom design tokens (for direct use in className styles) */
+  --accent-color: #00c9af;
+  --accent-hover: #00b39d;
+  --accent-muted: rgba(0, 201, 175, 0.1);
+  --bg-dark: #1e2229;
+  --bg-dark-alt: #35393f;
+  --text-on-dark: #ffffff;
+  --text-on-dark-muted: rgba(255, 255, 255, 0.7);
+  --border-dark: rgba(255, 255, 255, 0.1);
+  --status-error: #e74c3c;
+  --status-warning: #f39c12;
+  --status-success: #00c9af;
 }
 
 @layer base {
@@ -123,8 +112,14 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
   }
-  html {
-    @apply font-sans;
+  h1, h2, h3 {
+    font-family: 'Saira Stencil One', sans-serif;
   }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #efebe5; }
+  ::-webkit-scrollbar-thumb { background: #00c9af; border-radius: 4px; }
 }
