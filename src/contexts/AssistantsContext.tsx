@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import { useSession } from "next-auth/react";
 import type { Assistant, AuditLog } from "@/lib/types";
 
 interface CreateData {
@@ -46,6 +47,7 @@ export function AssistantsProvider({ children }: { children: ReactNode }) {
   const [assistants, setAssistants] = useState<Assistant[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const { status } = useSession();
 
   const fetchAssistants = useCallback(async () => {
     try {
@@ -70,9 +72,10 @@ export function AssistantsProvider({ children }: { children: ReactNode }) {
   }, [fetchAssistants, fetchAuditLogs]);
 
   useEffect(() => {
+    if (status !== "authenticated") return;
     setLoading(true);
     refetch().finally(() => setLoading(false));
-  }, [refetch]);
+  }, [status, refetch]);
 
   async function createAssistant(data: CreateData, publish: boolean): Promise<Assistant> {
     const assistant = await apiFetch<Assistant>("/api/assistants", {
