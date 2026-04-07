@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { useSession } from "next-auth/react";
@@ -18,6 +18,7 @@ interface UpdateData {
   voice: string;
   language: string;
   tools: unknown[];
+  status?: "draft";
 }
 
 interface AssistantsContextValue {
@@ -54,7 +55,7 @@ export function AssistantsProvider({ children }: { children: ReactNode }) {
       const data = await apiFetch<Assistant[]>("/api/assistants");
       setAssistants(data);
     } catch {
-      // silently fail — user will see empty list
+      // silently fail - user will see empty list
     }
   }, []);
 
@@ -73,7 +74,7 @@ export function AssistantsProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (status !== "authenticated") return;
-    setLoading(true);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     refetch().finally(() => setLoading(false));
   }, [status, refetch]);
 
@@ -95,18 +96,18 @@ export function AssistantsProvider({ children }: { children: ReactNode }) {
   }
 
   async function publishAssistant(id: string): Promise<void> {
-    await apiFetch(`/api/assistants/${id}/publish`, { method: "PATCH" });
+    await apiFetch(`/api/assistants/${id}?action=publish`, { method: "PATCH" });
     await refetch();
   }
 
   async function duplicateAssistant(id: string): Promise<Assistant> {
-    const copy = await apiFetch<Assistant>(`/api/assistants/${id}/duplicate`, { method: "POST" });
+    const copy = await apiFetch<Assistant>(`/api/assistants/${id}?action=duplicate`, { method: "POST" });
     await refetch();
     return copy;
   }
 
   async function archiveAssistant(id: string): Promise<void> {
-    await apiFetch(`/api/assistants/${id}/archive`, { method: "PATCH" });
+    await apiFetch(`/api/assistants/${id}?action=archive`, { method: "PATCH" });
     await refetch();
   }
 
@@ -125,3 +126,4 @@ export function useAssistants() {
   if (!ctx) throw new Error("useAssistants must be used within AssistantsProvider");
   return ctx;
 }
+

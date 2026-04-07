@@ -5,7 +5,6 @@ services:
       POSTGRES_USER: sessionops
       POSTGRES_PASSWORD: sessionops
       POSTGRES_DB: sessionops_studio
-      POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - "5433:5432"
     volumes:
@@ -17,19 +16,22 @@ services:
       retries: 5
 
   migrate:
-    build: .
+    build:
+      context: .
+      target: runner
     environment:
       DATABASE_URL: postgresql://sessionops:sessionops@postgres:5432/sessionops_studio
-    command: sh -c "npx prisma migrate dev --name init && npx prisma db seed"
+      NEXTAUTH_SECRET: dev-secret-change-in-production
+      NEXTAUTH_URL: http://localhost:3000
+    command: sh -c "npx prisma migrate deploy && npm run db:seed"
     depends_on:
       postgres:
         condition: service_healthy
-    volumes:
-      - .:/app
-      - node_modules_data:/app/node_modules
 
   app:
-    build: .
+    build:
+      context: .
+      target: runner
     ports:
       - "3000:3000"
     environment:
@@ -37,12 +39,9 @@ services:
       NEXTAUTH_SECRET: dev-secret-change-in-production
       NEXTAUTH_URL: http://localhost:3000
     depends_on:
-      postgres:
-        condition: service_healthy
-    volumes:
-      - .:/app
-      - node_modules_data:/app/node_modules
+      migrate:
+        condition: service_completed_successfully
+    command: ["node", "server.mjs"]
 
 volumes:
   postgres_data:
-  node_modules_data:

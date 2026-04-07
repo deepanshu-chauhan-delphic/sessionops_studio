@@ -1,4 +1,4 @@
-// ─── Users ────────────────────────────────────────────────────────────────────
+﻿// â”€â”€â”€ Users â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export type UserRole = "admin" | "viewer";
 
@@ -10,7 +10,7 @@ export interface User {
   createdAt: string;
 }
 
-// ─── Assistants ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Assistants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export type AssistantStatus = "draft" | "published" | "archived";
 
@@ -59,7 +59,7 @@ export interface Assistant {
   version: number;
 }
 
-// ─── Sessions ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Sessions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export type SessionStatus =
   | "active"
@@ -80,7 +80,7 @@ export interface SessionSummary {
   overview: string;
   collectedFields: Record<string, string>;
   escalationFlags: string[];
-  isDraft: true; // always true — for staff review only
+  isDraft: true; // always true - for staff review only
 }
 
 export interface Session {
@@ -97,7 +97,7 @@ export interface Session {
   metadata: Record<string, unknown>;
 }
 
-// ─── Audit Logs ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Audit Logs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export type AuditAction =
   | "created"
@@ -106,7 +106,9 @@ export type AuditAction =
   | "archived"
   | "duplicated"
   | "session_started"
-  | "session_ended";
+  | "session_ended"
+  | "session_flagged"
+  | "session_reviewed";
 
 export type AuditEntityType = "assistant" | "session";
 
@@ -120,3 +122,4 @@ export interface AuditLog {
   changes: Record<string, unknown> | null;
   createdAt: string;
 }
+

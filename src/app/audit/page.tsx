@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useAssistants } from "@/contexts/AssistantsContext";
 import type { AuditLog } from "@/lib/types";
@@ -11,16 +11,20 @@ const ACTION_LABELS: Record<AuditLog["action"], string> = {
   duplicated: "Duplicated",
   session_started: "Session Started",
   session_ended: "Session Ended",
+  session_flagged: "Flagged For Review",
+  session_reviewed: "Reviewed",
 };
 
-const ACTION_COLORS: Record<AuditLog["action"], string> = {
-  created: "#3498db",
-  edited: "#f39c12",
-  published: "#00c9af",
-  archived: "#95a5a6",
-  duplicated: "#9b59b6",
-  session_started: "#2ecc71",
-  session_ended: "#e74c3c",
+const ACTION_STYLES: Record<AuditLog["action"], { background: string; color: string }> = {
+  created: { background: "rgba(0,201,175,0.12)", color: "var(--accent-color)" },
+  edited: { background: "rgba(243,156,18,0.15)", color: "var(--warning)" },
+  published: { background: "rgba(0,201,175,0.12)", color: "var(--accent-color)" },
+  archived: { background: "rgba(53,57,63,0.12)", color: "var(--text-secondary)" },
+  duplicated: { background: "rgba(53,57,63,0.12)", color: "var(--bg-dark-alt)" },
+  session_started: { background: "rgba(0,201,175,0.12)", color: "var(--accent-color)" },
+  session_ended: { background: "rgba(231,76,60,0.15)", color: "var(--error)" },
+  session_flagged: { background: "rgba(243,156,18,0.15)", color: "var(--warning)" },
+  session_reviewed: { background: "rgba(0,201,175,0.12)", color: "var(--accent-color)" },
 };
 
 function formatDateTime(iso: string) {
@@ -44,7 +48,7 @@ export default function AuditPage() {
 
       {loading ? (
         <div style={{ padding: "48px 24px", textAlign: "center" }}>
-          <p style={{ fontSize: 14, color: "var(--text-secondary)", fontFamily: "'Inter', sans-serif" }}>Loading…</p>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)", fontFamily: "'Inter', sans-serif" }}>Loading...</p>
         </div>
       ) : auditLogs.length === 0 ? (
         <div style={{
@@ -91,8 +95,8 @@ export default function AuditPage() {
                       fontSize: 12,
                       fontWeight: 600,
                       fontFamily: "'Inter', sans-serif",
-                      background: `${ACTION_COLORS[log.action]}18`,
-                      color: ACTION_COLORS[log.action],
+                      background: ACTION_STYLES[log.action].background,
+                      color: ACTION_STYLES[log.action].color,
                     }}>
                       {ACTION_LABELS[log.action] ?? log.action}
                     </span>
@@ -117,3 +121,4 @@ export default function AuditPage() {
     </div>
   );
 }
+

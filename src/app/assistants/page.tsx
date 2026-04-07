@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -7,6 +7,7 @@ import { Plus, Pencil, Copy, Archive, Play } from "lucide-react";
 import { useAssistants } from "@/contexts/AssistantsContext";
 import { useIsAdmin } from "@/hooks/useCurrentUser";
 import StatusBadge from "@/components/ui/StatusBadge";
+import { AssistantsTableSkeleton } from "@/components/ui/Skeleton";
 import type { AssistantStatus } from "@/lib/types";
 
 const STATUS_TABS: { label: string; value: AssistantStatus | "all" }[] = [
@@ -40,6 +41,7 @@ export default function AssistantsPage() {
   const [statusFilter, setStatusFilter] = useState<AssistantStatus | "all">("all");
   const [confirmArchiveId, setConfirmArchiveId] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const filtered = assistants.filter((a) => {
     const matchSearch =
@@ -51,8 +53,11 @@ export default function AssistantsPage() {
 
   async function handleArchive(id: string) {
     setActionLoading(id);
+    setActionError(null);
     try {
       await archiveAssistant(id);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Failed to archive assistant.");
     } finally {
       setConfirmArchiveId(null);
       setActionLoading(null);
@@ -61,23 +66,18 @@ export default function AssistantsPage() {
 
   async function handleDuplicate(id: string) {
     setActionLoading(id + "-dup");
+    setActionError(null);
     try {
       await duplicateAssistant(id);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Failed to duplicate assistant.");
     } finally {
       setActionLoading(null);
     }
   }
 
   if (loading) {
-    return (
-      <div className="p-8">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 200 }}>
-          <p style={{ fontSize: 14, color: "var(--text-secondary)", fontFamily: "'Inter', sans-serif" }}>
-            Loading assistants…
-          </p>
-        </div>
-      </div>
-    );
+    return <AssistantsTableSkeleton />;
   }
 
   return (
@@ -108,6 +108,23 @@ export default function AssistantsPage() {
           </Link>
         )}
       </div>
+
+      {actionError && (
+        <div
+          style={{
+            marginBottom: 14,
+            padding: "10px 12px",
+            borderRadius: 8,
+            border: "1px solid var(--status-error)",
+            background: "rgba(231,76,60,0.08)",
+            color: "var(--status-error)",
+            fontSize: 13,
+            fontFamily: "'Inter', sans-serif",
+          }}
+        >
+          {actionError}
+        </div>
+      )}
 
       {/* Search + Tabs */}
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20, flexWrap: "wrap" }}>
@@ -210,7 +227,7 @@ export default function AssistantsPage() {
                     </td>
                     <td style={{ padding: "12px 14px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                        {/* Start Session — published only */}
+                        {/* Start Session - published only */}
                         <button
                           title={a.status !== "published" ? "Only published assistants can be launched" : "Start Session"}
                           disabled={a.status !== "published"}
@@ -257,7 +274,7 @@ export default function AssistantsPage() {
                                     disabled={actionLoading === a.id}
                                     style={{ fontSize: 11, fontFamily: "'Inter', sans-serif", fontWeight: 600, color: "var(--status-error)", background: "none", border: "none", cursor: "pointer", padding: "2px 4px" }}
                                   >
-                                    {actionLoading === a.id ? "…" : "Yes"}
+                                    {actionLoading === a.id ? "..." : "Yes"}
                                   </button>
                                   <button onClick={() => setConfirmArchiveId(null)}
                                     style={{ fontSize: 11, fontFamily: "'Inter', sans-serif", color: "var(--text-secondary)", background: "none", border: "none", cursor: "pointer", padding: "2px 4px" }}>
@@ -285,3 +302,4 @@ export default function AssistantsPage() {
     </div>
   );
 }
+

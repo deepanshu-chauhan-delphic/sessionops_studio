@@ -4,7 +4,7 @@ import { requireAuth, requireAdmin } from "@/lib/api-auth";
 
 // GET /api/assistants?search=&status=
 export async function GET(req: NextRequest) {
-  const { error, session } = await requireAuth();
+  const { error } = await requireAuth();
   if (error) return error;
 
   const { searchParams } = new URL(req.url);

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -34,6 +34,7 @@ const LABEL_STYLE = {
 export default function AssistantForm({ assistant }: AssistantFormProps) {
   const router = useRouter();
   const { createAssistant, updateAssistant, publishAssistant } = useAssistants();
+  const isArchived = assistant?.status === "archived";
 
   const [name, setName] = useState(assistant?.name ?? "");
   const [purpose, setPurpose] = useState(assistant?.purpose ?? "");
@@ -44,7 +45,9 @@ export default function AssistantForm({ assistant }: AssistantFormProps) {
       AVAILABLE_TOOLS.map((t) => ({ ...t, enabled: false }))
   );
   const [errors, setErrors] = useState<{ name?: string; purpose?: string }>({});
-  const [saving, setSaving] = useState(false);
+  const [savingDraft, setSavingDraft] = useState(false);
+  const [savingPublish, setSavingPublish] = useState(false);
+  const saving = savingDraft || savingPublish;
   const [apiError, setApiError] = useState<string | null>(null);
 
   function validate() {
@@ -63,24 +66,25 @@ export default function AssistantForm({ assistant }: AssistantFormProps) {
 
   async function handleSaveDraft() {
     if (!validate()) return;
-    setSaving(true);
+    setSavingDraft(true);
     setApiError(null);
     try {
       if (assistant) {
-        await updateAssistant(assistant.id, { name, purpose, voice, language, tools });
+        // Pass status:"draft" so a published assistant gets demoted back to draft
+        await updateAssistant(assistant.id, { name, purpose, voice, language, tools, status: "draft" });
       } else {
         await createAssistant({ name, purpose, voice, language, tools }, false);
       }
       router.push("/assistants");
     } catch (err) {
       setApiError(err instanceof Error ? err.message : "Failed to save.");
-      setSaving(false);
+      setSavingDraft(false);
     }
   }
 
   async function handlePublish() {
     if (!validate()) return;
-    setSaving(true);
+    setSavingPublish(true);
     setApiError(null);
     try {
       if (assistant) {
@@ -94,12 +98,29 @@ export default function AssistantForm({ assistant }: AssistantFormProps) {
       router.push("/assistants");
     } catch (err) {
       setApiError(err instanceof Error ? err.message : "Failed to publish.");
-      setSaving(false);
+      setSavingPublish(false);
     }
   }
 
   return (
     <div style={{ maxWidth: 680 }}>
+      {isArchived && (
+        <div
+          style={{
+            marginBottom: 16,
+            padding: "10px 14px",
+            borderRadius: 8,
+            background: "rgba(53,57,63,0.08)",
+            border: "1px solid var(--border)",
+            fontSize: 13,
+            fontFamily: "'Inter', sans-serif",
+            color: "var(--text-secondary)",
+          }}
+        >
+          Archived assistants are read-only. Restore by duplicating it into a new draft.
+        </div>
+      )}
+
       {apiError && (
         <div style={{
           marginBottom: 16, padding: "10px 14px", borderRadius: 8,
@@ -223,7 +244,7 @@ export default function AssistantForm({ assistant }: AssistantFormProps) {
         </button>
         <button
           onClick={handleSaveDraft}
-          disabled={saving}
+          disabled={saving || isArchived}
           style={{
             padding: "9px 18px",
             borderRadius: 8,
@@ -233,15 +254,15 @@ export default function AssistantForm({ assistant }: AssistantFormProps) {
             fontSize: 14,
             fontWeight: 600,
             fontFamily: "'Inter', sans-serif",
-            cursor: saving ? "not-allowed" : "pointer",
-            opacity: saving ? 0.5 : 1,
+            cursor: saving || isArchived ? "not-allowed" : "pointer",
+            opacity: saving || isArchived ? 0.5 : 1,
           }}
         >
-          {saving ? "Saving…" : "Save as Draft"}
+          {savingDraft ? "Saving..." : "Save as Draft"}
         </button>
         <button
           onClick={handlePublish}
-          disabled={saving}
+          disabled={saving || isArchived}
           style={{
             padding: "9px 18px",
             borderRadius: 8,
@@ -251,13 +272,14 @@ export default function AssistantForm({ assistant }: AssistantFormProps) {
             fontSize: 14,
             fontWeight: 600,
             fontFamily: "'Inter', sans-serif",
-            cursor: saving ? "not-allowed" : "pointer",
-            opacity: saving ? 0.5 : 1,
+            cursor: saving || isArchived ? "not-allowed" : "pointer",
+            opacity: saving || isArchived ? 0.5 : 1,
           }}
         >
-          {saving ? "Saving…" : (assistant?.status === "published" ? "Save & Keep Published" : "Publish")}
+          {savingPublish ? "Saving..." : (assistant?.status === "published" ? "Save & Keep Published" : "Publish")}
         </button>
       </div>
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -166,7 +166,7 @@ async function main() {
       endedAt: new Date("2026-04-02T10:15:22Z"),
       durationSecs: 22,
       turnCount: 0,
-      summary: null,
+      summary: Prisma.DbNull,
       metadata: { browser: "Chrome 122", micGranted: false, failureReason: "Microphone permission denied by user" },
     },
   });
@@ -179,9 +179,9 @@ async function main() {
     data: [
       { id: "seed-al-001", userId: admin.id, action: "published", entityType: "assistant", entityId: a1.id, entityName: a1.name, changes: { previousStatus: "draft" }, createdAt: new Date("2026-02-05T09:00:00Z") },
       { id: "seed-al-002", userId: admin.id, action: "published", entityType: "assistant", entityId: a2.id, entityName: a2.name, changes: { previousStatus: "draft" }, createdAt: new Date("2026-02-12T08:30:00Z") },
-      { id: "seed-al-003", userId: admin.id, action: "session_started", entityType: "session", entityId: s2.id, entityName: a2.name, changes: null, createdAt: new Date("2026-04-04T14:00:00Z") },
+      { id: "seed-al-003", userId: admin.id, action: "session_started", entityType: "session", entityId: s2.id, entityName: a2.name, changes: Prisma.DbNull, createdAt: new Date("2026-04-04T14:00:00Z") },
       { id: "seed-al-004", userId: admin.id, action: "session_ended", entityType: "session", entityId: s2.id, entityName: a2.name, changes: { status: "needs_review", escalationFlags: 1 }, createdAt: new Date("2026-04-04T14:01:10Z") },
-      { id: "seed-al-005", userId: admin.id, action: "session_started", entityType: "session", entityId: s1.id, entityName: a1.name, changes: null, createdAt: new Date("2026-04-05T09:00:00Z") },
+      { id: "seed-al-005", userId: admin.id, action: "session_started", entityType: "session", entityId: s1.id, entityName: a1.name, changes: Prisma.DbNull, createdAt: new Date("2026-04-05T09:00:00Z") },
       { id: "seed-al-006", userId: admin.id, action: "session_ended", entityType: "session", entityId: s1.id, entityName: a1.name, changes: { durationSecs: 125, turnCount: 6, status: "completed" }, createdAt: new Date("2026-04-05T09:02:05Z") },
     ],
   });

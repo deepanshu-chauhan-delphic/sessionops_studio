@@ -41,6 +41,8 @@ enum AuditAction {
   duplicated
   session_started
   session_ended
+  session_flagged
+  session_reviewed
 }
 
 enum AuditEntityType {

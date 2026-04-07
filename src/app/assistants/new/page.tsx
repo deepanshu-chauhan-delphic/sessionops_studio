@@ -1,8 +1,16 @@
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
 import AssistantForm from "@/components/assistants/AssistantForm";
+import { authOptions } from "@/lib/auth";
 
-export default function NewAssistantPage() {
+export default async function NewAssistantPage() {
+  const session = await getServerSession(authOptions);
+  if (session?.user?.role !== "admin") {
+    redirect("/assistants");
+  }
+
   return (
     <div className="p-8">
       <Link

@@ -1,11 +1,18 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import EditAssistantClient from "./EditAssistantClient";
 import type { Assistant } from "@/lib/types";
+import { authOptions } from "@/lib/auth";
 
 export default async function EditAssistantPage({ params }: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (session?.user?.role !== "admin") {
+    redirect("/assistants");
+  }
+
   const { id } = await params;
 
   const raw = await prisma.assistant.findUnique({ where: { id } });
@@ -44,10 +51,11 @@ export default async function EditAssistantPage({ params }: { params: Promise<{ 
         Edit Assistant
       </h1>
       <p style={{ fontSize: 14, color: "var(--text-secondary)", fontFamily: "'Inter', sans-serif", marginBottom: 28 }}>
-        Editing <strong>{assistant.name}</strong> — v{assistant.version}
+        Editing <strong>{assistant.name}</strong> - v{assistant.version}
       </p>
 
       <EditAssistantClient assistant={assistant} />
     </div>
   );
 }
+

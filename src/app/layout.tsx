@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Sidebar from "@/components/layout/Sidebar";
 import Providers from "@/components/layout/Providers";
+import AppShell from "@/components/layout/AppShell";
 
 export const metadata: Metadata = {
   title: "SessionOps Studio",
-  description: "Voice assistant management platform — MiiHealth",
+  description: "Voice assistant management platform - MiiHealth",
 };
 
 export default function RootLayout({
@@ -15,12 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="h-full flex" style={{ background: "#ffffff" }}>
+      <body className="h-full" style={{ background: "#ffffff" }}>
         <Providers>
-          <Sidebar />
-          <main className="flex-1 overflow-y-auto min-h-screen">
-            {children}
-          </main>
+          <AppShell>{children}</AppShell>
         </Providers>
       </body>
     </html>

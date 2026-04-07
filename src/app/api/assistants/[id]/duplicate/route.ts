@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/api-auth";
 
@@ -41,13 +42,16 @@ export async function POST(req: NextRequest, { params }: ParamsContext) {
     );
   }
 
+  const tools =
+    existing.tools === null ? [] : (existing.tools as Prisma.InputJsonValue);
+
   const copy = await prisma.assistant.create({
     data: {
       name: `${existing.name} (Copy)`,
       purpose: existing.purpose,
       voice: existing.voice,
       language: existing.language,
-      tools: existing.tools,
+      tools,
       status: "draft",
       createdBy: session!.user.id,
       version: 1,
